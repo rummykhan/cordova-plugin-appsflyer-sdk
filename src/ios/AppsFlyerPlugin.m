@@ -180,15 +180,23 @@ static NSString *const SUCCESS         = @"Success";
 
 
 - (void)trackEvent:(CDVInvokedUrlCommand*)command {
-
+    
     NSString* eventName = [command.arguments objectAtIndex:0];
     NSDictionary* eventValues = [command.arguments objectAtIndex:1];
-    [[AppsFlyerTracker sharedTracker] trackEvent:eventName withValues:eventValues];
-
+    
+    if ([eventName isEqualToString:@"uninstall"]){
+        
+        NSString *deviceToken = [[NSString alloc]initWithFormat:@"%@",[eventValues objectForKey:@"token"]];
+        if(deviceToken!=nil){
+            [[AppsFlyerTracker sharedTracker] registerUninstall:deviceToken];
+        }
+    }else{
+        [[AppsFlyerTracker sharedTracker] trackEvent:eventName withValues:eventValues];
+    }
 }
 
 - (void)registerUninstall:(CDVInvokedUrlCommand*)command {
-
+    
     NSData* token = [command.arguments objectAtIndex:0];
     NSString *deviceToken = [NSString stringWithFormat:@"%@",token];
     
